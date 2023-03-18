@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:note_app/routes.dart';
-import 'package:note_app/screen/view_all_screen.dart';
+import 'package:note_app/screen/splash_screen.dart';
 import 'package:note_app/utils/constant.dart';
 import 'package:note_app/injection.dart' as di;
 
@@ -25,17 +24,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.deepOrange,
           appBarTheme: const AppBarTheme(
-            color: Colors.white,
+            color: Colors.transparent,
             elevation: 0,
-            titleTextStyle: TextStyle(
-                color: primaryColor,
-                fontSize: 32,
-                fontWeight: FontWeight.bold),
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            iconTheme: IconThemeData(color: Colors.black),
           ),
-          scaffoldBackgroundColor: Colors.white),
-      initialRoute: AllNotesScreen.routeName,
+          scaffoldBackgroundColor: primaryColor),
+      initialRoute: SplashScreen.routeName,
       routes: routes,
     );
   }

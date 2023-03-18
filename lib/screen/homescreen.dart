@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:note_app/injection.dart';
+import 'package:note_app/model/note_item_model.dart';
+import 'package:note_app/repository/archive_repository.dart';
+import 'package:note_app/repository/note_repository.dart';
+import 'package:note_app/screen/add_note_screen.dart';
+import 'package:note_app/screen/archived_note_screen.dart';
 import 'package:note_app/utils/constant.dart';
+import 'package:note_app/widgets/custom_appbar.dart';
+import 'package:note_app/widgets/note_list.dart';
 
-import '../injection.dart';
-import '../model/note_item_model.dart';
-import '../repository/archive_repository.dart';
-import '../widgets/archive_list.dart';
-import '../widgets/custom_appbar.dart';
+class HomeScreen extends StatefulWidget {
+  static String routeName = '/viewAllNotes';
 
-class ArchivedNotesScreen extends StatefulWidget {
-  static String routeName = '/archivedNotes';
-
-  const ArchivedNotesScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<ArchivedNotesScreen> createState() =>
-      _ArchivedNoteState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _ArchivedNoteState
-    extends State<ArchivedNotesScreen> {
+class _HomeScreenState extends State<HomeScreen> {
+  final noteRepository = sl.get<NoteRepository>();
   final archiveNoteRepository =
       sl.get<ArchiveNoteRepository>();
 
@@ -27,7 +28,7 @@ class _ArchivedNoteState
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<List<NoteItem>>(
-        stream: archiveNoteRepository.archiveNotes,
+        stream: noteRepository.notes,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong!');
@@ -41,10 +42,12 @@ class _ArchivedNoteState
                   height: 20,
                 ),
                 CustomAppBar(
-                  titleText: 'Archives',
+                  titleText: 'Notes',
                   icon: Icons.search,
-                  secondIcon: Icons.close_rounded,
-                  onPressed: () => Navigator.pop(context),
+                  secondIcon: Icons.archive_rounded,
+                  onPressed: () => Navigator.pushNamed(
+                      context,
+                      ArchivedNotesScreen.routeName),
                 ),
                 notes.isEmpty
                     ? Column(
@@ -64,7 +67,7 @@ class _ArchivedNoteState
                             height: 12,
                           ),
                           Text(
-                            'No archived note yet !',
+                            'Create your first note !',
                             style: GoogleFonts.nunito(
                                 fontSize: 20,
                                 color: white,
@@ -79,15 +82,15 @@ class _ArchivedNoteState
                               const EdgeInsets.symmetric(
                                   horizontal: 10,
                                   vertical: 8),
-                          child: ArchivedList(
+                          child: NoteList(
                               notes: notes,
-                              onRestoreNote: (notes) =>
+                              onArchiveNote: (notes) =>
                                   archiveNoteRepository
-                                      .restoreNote(notes),
+                                      .saveNoteToArchive(
+                                          notes),
                               onDeleteNote: (notes) =>
-                                  archiveNoteRepository
-                                      .deleteNoteFromArchive(
-                                          notes)),
+                                  noteRepository.deleteNote(
+                                      notes.referenceId)),
                         ),
                       )
               ],
@@ -98,6 +101,17 @@ class _ArchivedNoteState
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(
+            context, AddNoteScreen.routeName),
+        elevation: 2,
+        backgroundColor: lightGray,
+        child: const Icon(
+          Icons.add,
+          size: 28,
+          color: Colors.white,
+        ),
       ),
     );
   }

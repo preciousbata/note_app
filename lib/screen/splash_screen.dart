@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:note_app/screen/homescreen.dart';
 
 import '../utils/constant.dart';
-import '../widgets/custom_button.dart';
 
 class SplashScreen extends StatelessWidget {
   static String routeName = '/splashscreen';
@@ -24,9 +26,9 @@ class SplashBody extends StatefulWidget {
 class _SplashBodyState extends State<SplashBody> {
   int currentIndex = 0;
   List<String> imageList = [
-    'assets/images/note1.jpg',
-    'assets/images/note2.jpg',
-    'assets/images/note3.jpg'
+    'assets/memo.svg',
+    'assets/notepad.svg',
+    'assets/notes-record.svg'
   ];
 
   @override
@@ -46,7 +48,7 @@ class _SplashBodyState extends State<SplashBody> {
                 },
                 itemCount: imageList.length,
                 itemBuilder: (context, index) =>
-                    SplashContent(
+                    SplashScreenImage(
                   image: imageList[index],
                 ),
               ),
@@ -65,8 +67,13 @@ class _SplashBodyState extends State<SplashBody> {
                       children: [
                         ...List.generate(
                             imageList.length,
-                            (index) =>
-                                buildCustomDot(index))
+                            (index) => Padding(
+                                  padding:
+                                      const EdgeInsets.only(
+                                          left: 8.0),
+                                  child:
+                                      buildCustomDot(index),
+                                ))
                       ],
                     ),
                     const Spacer(
@@ -75,9 +82,36 @@ class _SplashBodyState extends State<SplashBody> {
                     Padding(
                       padding: const EdgeInsets.only(
                           bottom: 18.0),
-                      child: DefaultButton(
-                        text: 'Continue',
-                        press: () {},
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () =>
+                                  Navigator.pushNamed(
+                                      context,
+                                      HomeScreen.routeName),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty
+                                    .all(
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius
+                                            .circular(20),
+                                  ),
+                                ),
+                                backgroundColor:
+                                    MaterialStateProperty
+                                        .all(white),
+                              ),
+                              child: Text('Continue',
+                                  style: GoogleFonts.nunito(
+                                      fontSize: 25,
+                                      color: primaryColor,
+                                      fontWeight:
+                                          FontWeight.w600)),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -95,9 +129,7 @@ class _SplashBodyState extends State<SplashBody> {
       height: 9,
       width: currentIndex == index ? 28 : 9,
       decoration: BoxDecoration(
-        color: currentIndex == index
-            ? primaryColor
-            : Colors.transparent,
+        color: currentIndex == index ? white : lightGray,
         borderRadius: BorderRadius.circular(3),
       ),
       duration: animationDuration,
@@ -105,10 +137,10 @@ class _SplashBodyState extends State<SplashBody> {
   }
 }
 
-class SplashContent extends StatelessWidget {
+class SplashScreenImage extends StatelessWidget {
   final String image;
 
-  const SplashContent({
+  const SplashScreenImage({
     Key? key,
     required this.image,
   }) : super(key: key);
@@ -131,10 +163,10 @@ class SplashContent extends StatelessWidget {
         Padding(
           padding:
               const EdgeInsets.symmetric(horizontal: 18.0),
-          child: Image(
+          child: SvgPicture.asset(
+            image,
             height: 520,
             width: 465,
-            image: AssetImage(image),
           ),
         ),
       ],

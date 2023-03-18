@@ -7,13 +7,12 @@ import 'package:note_app/repository/note_repository.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  sl.registerSingleton<FirebaseFirestore>(
+      FirebaseFirestore.instance);
+  sl.registerLazySingleton<FirestoreDatabaseService>(
+      () => FirestoreDatabaseService(sl.get()));
   sl.registerLazySingleton<NoteRepository>(
       () => NoteRepository(sl.get()));
-  sl.registerSingleton(() => FirebaseFirestore.instance);
-  // sl.registerSingleton<FirestoreDatabaseService>(
-  //     () => FirestoreDatabaseService(sl.get()));
   sl.registerLazySingleton<ArchiveNoteRepository>(
-      () => ArchiveNoteRepository(
-            sl.get(),
-          ));
+      () => ArchiveNoteRepository(sl.get(), sl.get()));
 }

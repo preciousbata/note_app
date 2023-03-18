@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:note_app/repository/note_repository.dart';
 
@@ -12,10 +11,9 @@ const _notePath = 'notes';
 
 class ArchiveNoteRepository {
   final NoteRepository _noteRepository;
-  final FirestoreDatabaseService _fireStoreDb =
-      FirestoreDatabaseService(FirebaseFirestore.instance);
-
-  ArchiveNoteRepository(this._noteRepository);
+  final FirestoreDatabaseService _fireStoreDb;
+  ArchiveNoteRepository(
+      this._noteRepository, this._fireStoreDb);
 
   Stream<List<NoteItem>> get archiveNotes {
     return _fireStoreDb.getCollections(_collectionPath).map(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:note_app/injection.dart';
 import 'package:note_app/repository/note_repository.dart';
 
@@ -60,27 +61,79 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.blueGrey,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(25, 80, 25, 0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  'Create New Note',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 13,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        margin: const EdgeInsets.only(
+                            right: 10),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(15),
+                            color: lightGray),
+                        child: const Center(
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        final title = titleController
+                            .value.text
+                            .trim();
+                        final content = contentController
+                            .value.text
+                            .trim();
+                        _createNote(title, content);
+                      },
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        margin: const EdgeInsets.only(
+                            right: 10),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(15),
+                            color: lightGray),
+                        child: const Center(
+                          child: Icon(
+                            Icons.save_as,
+                            color: white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Form(
-                  key: _formKey,
-                  autovalidateMode:
-                      AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Form(
+                key: _formKey,
+                autovalidateMode:
+                    AutovalidateMode.onUserInteraction,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 18.0),
                   child: Column(
                     children: [
                       TextFormField(
@@ -93,84 +146,72 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                            labelText: 'Title',
+                            hintText: 'Title',
+                            hintStyle: GoogleFonts.nunito(
+                                fontSize: 40,
+                                fontWeight: FontWeight.w400,
+                                color: lightGray),
                             filled: true,
-                            fillColor: Colors.white,
-                            enabledBorder:
-                                OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(10))),
+                            fillColor: white,
+                            border: InputBorder.none),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 22,
                       ),
                       TextFormField(
                         keyboardType:
                             TextInputType.multiline,
                         controller: contentController,
-                        maxLines: 6,
+                        maxLines: 17,
                         decoration: InputDecoration(
-                            labelText: 'Content',
+                            hintText: 'Type something...',
+                            hintStyle: GoogleFonts.nunito(
+                                fontSize: 23,
+                                color: lightGray),
                             fillColor: Colors.white,
                             filled: true,
-                            enabledBorder:
-                                OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(10))),
+                            border: InputBorder.none),
                       )
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              Text(
+                'Pick a Note Colour',
+                style: GoogleFonts.nunito(
+                  fontSize: 23,
+                  color: white,
                 ),
-                Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Pick a Note Colour',
-                      style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 100,
-                      child: ListView.separated(
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(width: 20),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: colors.length,
-                        itemBuilder: (_, int index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedColor =
-                                    colors[index];
-                              });
-                            },
-                            child: buildColorContainer(
-                                colors[index]),
-                          );
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0),
+                child: SizedBox(
+                  height: 100,
+                  child: ListView.separated(
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: 20),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: noteColors.length,
+                    itemBuilder: (_, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedColor =
+                                noteColors[index];
+                          });
                         },
-                      ),
-                    ),
-                  ],
+                        child: buildColorContainer(
+                            noteColors[index]),
+                      );
+                    },
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    final title =
-                        titleController.value.text.trim();
-                    final content =
-                        contentController.value.text.trim();
-                    _createNote(title, content);
-                  },
-                  child: const Text('Create New Note'),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

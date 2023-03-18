@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:note_app/screen/edit_screen.dart';
 
 import '../model/note_item_model.dart';
-import '../screen/note_details_screen.dart';
 import '../utils/dialog.dart';
 import '../utils/hex_converter.dart';
 
@@ -19,19 +21,17 @@ class NoteList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final note = notes[index];
-          return NoteListItem(
-            onArchiveNote: onArchiveNote,
-            onDeleteNote: onDeleteNote,
-            note: note,
-            onPressed: (note) {},
-          );
-        },
-        childCount: notes.length,
-      ),
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        final note = notes[index];
+        return NoteListItem(
+          onArchiveNote: onArchiveNote,
+          onDeleteNote: onDeleteNote,
+          note: note,
+          onPressed: (note) {},
+        );
+      },
+      itemCount: notes.length,
     );
   }
 }
@@ -61,14 +61,13 @@ class _NoteListItemState extends State<NoteListItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
-          context, NoteDetailScreen.routeName,
+          context, EditScreen.routeName,
           arguments: widget.note),
       child: Card(
-        color: Colors.blue,
+        color: Colors.transparent,
         elevation: 3,
         child: Dismissible(
           key: ValueKey(widget.note.id),
-          // direction: DismissDirection.endToStart,
           secondaryBackground: Container(
             color: Colors.red,
             child: Row(
@@ -130,7 +129,6 @@ class _NoteListItemState extends State<NoteListItem> {
               ],
             ),
           ),
-
           onDismissed: (direction) {
             switch (direction) {
               case DismissDirection.endToStart:
@@ -163,10 +161,13 @@ class _NoteListItemState extends State<NoteListItem> {
             return false;
           },
           child: Container(
-            height: 100.0,
-            color: widget.note.colorHex.isEmpty
-                ? Colors.blueGrey
-                : HexColor(widget.note.colorHex),
+            height: 123.0,
+            width: 365,
+            decoration: BoxDecoration(
+                color: widget.note.colorHex.isEmpty
+                    ? Colors.blueGrey
+                    : HexColor(widget.note.colorHex),
+                borderRadius: BorderRadius.circular(10)),
             padding: const EdgeInsets.symmetric(
                 horizontal: 20, vertical: 10.0),
             child: Column(
@@ -176,22 +177,19 @@ class _NoteListItemState extends State<NoteListItem> {
                     children: [
                       Text(
                         widget.note.title,
-                        maxLines: 2,
-                        style: const TextStyle(
-                            overflow: TextOverflow.fade,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white),
+                        style: GoogleFonts.nunito(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600),
                       ),
                       Flexible(
                         child: Text(
                           widget.note.content,
-                          maxLines: 2,
-                          softWrap: true,
-                          style: const TextStyle(
-                              overflow:
-                                  TextOverflow.ellipsis,
-                              color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.nunito(
+                              fontSize: 25,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                     ],
@@ -205,13 +203,15 @@ class _NoteListItemState extends State<NoteListItem> {
                     children: [
                       const Icon(
                         Icons.calendar_month,
-                        size: 12,
+                        size: 20,
+                        color: Colors.white,
                       ),
                       const SizedBox(
-                        width: 20.0,
+                        width: 12.0,
                       ),
                       Text(
-                        widget.note.createdAt.toString(),
+                        DateFormat.yMMMEd()
+                            .format(widget.note.createdAt),
                         style: const TextStyle(
                           fontSize: 12.0,
                           color: Colors.white,

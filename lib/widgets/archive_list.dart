@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../model/note_item_model.dart';
 import '../utils/dialog.dart';
@@ -18,19 +20,17 @@ class ArchivedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final note = notes[index];
-          return ArchivedListItem(
-            onRestoreNote: onRestoreNote,
-            onDeleteNote: onDeleteNote,
-            note: note,
-            onPressed: (note) {},
-          );
-        },
-        childCount: notes.length,
-      ),
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        final note = notes[index];
+        return ArchivedListItem(
+          onRestoreNote: onRestoreNote,
+          onDeleteNote: onDeleteNote,
+          note: note,
+          onPressed: (note) {},
+        );
+      },
+      itemCount: notes.length,
     );
   }
 }
@@ -63,7 +63,7 @@ class _ArchivedListItemState
     return GestureDetector(
       onTap: () => widget.onPressed(widget.note),
       child: Card(
-        color: Colors.blue,
+        color: Colors.transparent,
         elevation: 3,
         child: Dismissible(
           key: ValueKey(widget.note.id),
@@ -160,10 +160,13 @@ class _ArchivedListItemState
             return false;
           },
           child: Container(
-            height: 100.0,
-            color: widget.note.colorHex.isEmpty
-                ? Colors.blueGrey
-                : HexColor(widget.note.colorHex),
+            height: 123.0,
+            width: 365,
+            decoration: BoxDecoration(
+                color: widget.note.colorHex.isEmpty
+                    ? Colors.blueGrey
+                    : HexColor(widget.note.colorHex),
+                borderRadius: BorderRadius.circular(10)),
             padding: const EdgeInsets.symmetric(
                 horizontal: 20, vertical: 10.0),
             child: Column(
@@ -173,22 +176,19 @@ class _ArchivedListItemState
                     children: [
                       Text(
                         widget.note.title,
-                        maxLines: 2,
-                        style: const TextStyle(
-                            overflow: TextOverflow.fade,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white),
+                        style: GoogleFonts.nunito(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600),
                       ),
                       Flexible(
                         child: Text(
                           widget.note.content,
-                          maxLines: 2,
                           softWrap: true,
-                          style: const TextStyle(
-                              overflow:
-                                  TextOverflow.ellipsis,
-                              color: Colors.white),
+                          style: GoogleFonts.nunito(
+                              fontSize: 25,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                     ],
@@ -202,13 +202,15 @@ class _ArchivedListItemState
                     children: [
                       const Icon(
                         Icons.calendar_month,
-                        size: 12,
+                        size: 20,
+                        color: Colors.white,
                       ),
                       const SizedBox(
-                        width: 20.0,
+                        width: 12.0,
                       ),
                       Text(
-                        widget.note.createdAt.toString(),
+                        DateFormat.yMMMEd()
+                            .format(widget.note.createdAt),
                         style: const TextStyle(
                           fontSize: 12.0,
                           color: Colors.white,
